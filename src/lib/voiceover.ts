@@ -1,4 +1,5 @@
-const ELEVEN_LABS_API_KEY = 'sk_25ca5c3c76245154b84e1d9b4e5037f9a0b582358238c56f';
+// const ELEVEN_LABS_API_KEY = 'sk_25ca5c3c76245154b84e1d9b4e5037f9a0b582358238c56f';
+const ELEVEN_LABS_API_KEY = 'sk_a7d238721b359dae5746d4c585167571f1ca4a933a0d1374';
 const VOICE_ID = '21m00Tcm4TlvDq8ikWAM'; // Default voice ID - Rachel (you can change this to any other voice ID)
 
 interface VoiceSettings {

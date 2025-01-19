@@ -6,27 +6,23 @@ const cohere = new CohereClient({
 
 export async function generateScript(content: string): Promise<string> {
   try {
-    const enhancedPrompt = `Transform the following educational content into a clear, structured video script. Focus on creating concise, visually descriptive segments that can be directly translated into video slides. Each segment should be self-contained and avoid dialogue or narration markers.
+    const prompt = `Create a professional educational video script from this content. Present the information in clear, concise segments that flow naturally. Each segment should be a complete thought that can stand alone as a slide.
 
-Content to transform:
+Content:
 ${content}
 
-Guidelines:
-- Break content into clear, distinct segments
-- Each segment should be 1-2 sentences (max 200 characters)
-- Focus on key concepts and visual descriptions
-- Avoid dialogue markers (e.g., no "Now we'll see..." or "Let's look at...")
-- Use present tense and active voice
-- Include clear transitions between main points
-- Maintain a professional, educational tone
+Requirements:
+- Present key points in a logical sequence
+- Each segment should be 1-2 sentences
+- Use clear, professional language
+- Focus on explaining concepts clearly
+- Maintain an educational tone
+- Include smooth transitions between ideas
 
-Example format:
-The structure of a DNA molecule consists of a double helix.
-Nucleotide base pairs connect the two strands through hydrogen bonds.
-The sugar-phosphate backbone runs along the outside of the molecule.`;
+Format each segment as a complete statement that can be presented visually.`;
 
     const response = await cohere.generate({
-      prompt: enhancedPrompt,
+      prompt,
       maxTokens: 500,
       temperature: 0.7,
       k: 0,
@@ -34,11 +30,17 @@ The sugar-phosphate backbone runs along the outside of the molecule.`;
       returnLikelihoods: 'NONE'
     });
 
-    // Clean up the generated text to remove any potential dialogue markers
-    let script = response.generations[0].text
-      .replace(/^(Now|Let's|We will|Let us|Here we|As we can see).+?\./gm, '') // Remove common dialogue starters
-      .replace(/\n{3,}/g, '\n\n') // Normalize line breaks
-      .trim();
+    // Clean and format the response
+    const script = response.generations[0].text
+      .split(/\n+/)
+      .map(segment => segment.trim())
+      .filter(segment => segment.length > 0)
+      .map(segment => segment
+        .replace(/^[-*•]/g, '')
+        .replace(/^(Step|First|Second|Third|Next|Finally|Then)[:\s]*/i, '')
+        .trim()
+      )
+      .join('\n\n');
 
     return script;
   } catch (error) {
